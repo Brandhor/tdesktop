@@ -21,4 +21,5 @@ Copyright (c) 2014 John Preston, https://tdesktop.com
 #ifdef Q_OS_WIN
 Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
 Q_IMPORT_PLUGIN(AccessibleFactory)
+Q_IMPORT_PLUGIN(QWindowsAudioPlugin)
 #endif
