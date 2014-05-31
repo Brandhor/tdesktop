@@ -162,6 +162,7 @@ lng_settings_emoji_list: "List of supported emojis";
 lng_settings_send_enter: "Send by Enter";
 lng_settings_send_ctrlenter: "Send by Ctrl+Enter";
 lng_settings_cats_and_dogs: "Allow cats and dogs";
+lng_settings_scroll_not_active: "Automatically scroll even if telegram is not the active program";
 
 lng_download_path_dont_ask: "Don't ask download path for each file";
 lng_download_path_label: "Download path: ";

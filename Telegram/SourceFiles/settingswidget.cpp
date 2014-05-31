@@ -146,6 +146,8 @@ SettingsInner::SettingsInner(Settings *parent) : QWidget(parent),
 	_tempDirClearFailedWidth(st::linkFont->m.width(lang(lng_download_path_clear_failed))),
 
 	_catsAndDogs(this, lang(lng_settings_cats_and_dogs), cCatsAndDogs()),
+	
+	_scrollNotActive(this, lang(lng_settings_scroll_not_active), cScrollNotActive()),
 
 	// advanced
 	_connectionType(this, lang(lng_connection_auto)),
@@ -219,6 +221,8 @@ SettingsInner::SettingsInner(Settings *parent) : QWidget(parent),
 	connect(App::wnd(), SIGNAL(tempDirClearFailed()), this, SLOT(onTempDirClearFailed()));
 
 	connect(&_catsAndDogs, SIGNAL(changed()), this, SLOT(onCatsAndDogs()));
+
+	connect(&_scrollNotActive, SIGNAL(changed()), this, SLOT(onScrollNotActive()));
 
 	// advanced
 	connect(&_connectionType, SIGNAL(clicked()), this, SLOT(onConnectionType()));
@@ -408,7 +412,8 @@ void SettingsInner::paintEvent(QPaintEvent *e) {
 		}
 		top += st::setSectionSkip;
 
-		top += _catsAndDogs.height();
+		top += _catsAndDogs.height() + st::setLittleSkip;
+		top += _scrollNotActive.height();
 	}
 	
 	// advanced
@@ -478,7 +483,8 @@ void SettingsInner::resizeEvent(QResizeEvent *e) {
 			top += _downloadPathEdit.height();
 		}
 		top += st::setSectionSkip;
-		_catsAndDogs.move(_left, top); top += _catsAndDogs.height();
+		_catsAndDogs.move(_left, top); top += _catsAndDogs.height() + st::setLittleSkip;
+		_scrollNotActive.move(_left, top); top += _scrollNotActive.height();
 	}
 
 	// advanced
@@ -645,6 +651,7 @@ void SettingsInner::showAll() {
 		_enterSend.show();
 		_ctrlEnterSend.show();
 		_catsAndDogs.show();
+		_scrollNotActive.show();
 		_dontAskDownloadPath.show();
 		if (cAskDownloadPath()) {
 			_downloadPathEdit.hide();
@@ -663,6 +670,7 @@ void SettingsInner::showAll() {
 		_enterSend.hide();
 		_ctrlEnterSend.hide();
 		_catsAndDogs.hide();
+		_scrollNotActive.hide();
 		_dontAskDownloadPath.hide();
 		_downloadPathEdit.hide();
 		_downloadPathClear.hide();
@@ -924,6 +932,11 @@ void SettingsInner::onCtrlEnterSend() {
 
 void SettingsInner::onCatsAndDogs() {
 	cSetCatsAndDogs(_catsAndDogs.checked());
+	App::writeUserConfig();
+}
+
+void SettingsInner::onScrollNotActive() {
+	cSetScrollNotActive(_scrollNotActive.checked());
 	App::writeUserConfig();
 }
 

@@ -52,6 +52,7 @@ bool gNeedConfigResave = false;
 
 bool gCtrlEnter = false;
 bool gCatsAndDogs = true;
+bool gScrollNotActive = true;
 
 uint32 gConnectionsInSession = 1;
 QString gLoggedPhoneNumber;

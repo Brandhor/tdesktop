@@ -1714,9 +1714,15 @@ void HistoryWidget::updateControlsVisibility() {
 }
 
 void HistoryWidget::newUnreadMsg(History *history, MsgId msgId) {
-	if (App::wnd()->historyIsActive()) {
+	if (cScrollNotActive() || App::wnd()->historyIsActive()) {
 		if (hist == history && hist->unreadLoaded) {
-			historyWasRead();
+			if(cScrollNotActive() && !App::wnd()->historyIsActive()) {
+				App::wnd()->psNotify(history, msgId);
+				history->setUnreadCount(history->unreadCount + 1);
+			}
+			else {
+				historyWasRead();
+			}
 			if (_scroll.scrollTop() + 1 > _scroll.scrollTopMax()) {
 				if (history->unreadBar) history->unreadBar->destroy();
 			}

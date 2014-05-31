@@ -122,6 +122,8 @@ public slots:
 
 	void onCatsAndDogs();
 
+	void onScrollNotActive();
+
 	void onUpdateChecking();
 	void onUpdateLatest();
 	void onUpdateDownloading(qint64 ready, qint64 total);
@@ -200,6 +202,7 @@ private:
 	};
 	TempDirClearState _tempDirClearState;
 	FlatCheckbox _catsAndDogs;
+	FlatCheckbox _scrollNotActive;
 
 	// advanced
 	LinkButton _connectionType, _resetSessions;

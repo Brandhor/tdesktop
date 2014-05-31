@@ -69,6 +69,7 @@ inline const QString &cDialogHelperPathFinal() {
 }
 DeclareSetting(bool, CtrlEnter);
 DeclareSetting(bool, CatsAndDogs);
+DeclareSetting(bool, ScrollNotActive);
 DeclareSetting(bool, SoundNotify);
 DeclareSetting(bool, NeedConfigResave);
 DeclareSetting(bool, DesktopNotify);

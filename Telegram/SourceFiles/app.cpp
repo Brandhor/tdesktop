@@ -1512,6 +1512,7 @@ namespace App {
 				stream << quint32(dbiAskDownloadPath) << qint32(cAskDownloadPath());
 				stream << quint32(dbiDownloadPath) << (cAskDownloadPath() ? QString() : cDownloadPath());
 				stream << quint32(dbiEmojiTab) << qint32(cEmojiTab());
+				stream << quint32(dbiSrollNotActive) << qint32(cScrollNotActive() ? 1 : 0);
 
 				RecentEmojiPreload v;
 				v.reserve(cGetRecentEmojis().size());
@@ -1642,6 +1643,12 @@ namespace App {
 				qint32 v;
 				stream >> v;
 				cSetCatsAndDogs(v == 1);
+			} break;
+
+			case dbiSrollNotActive: {
+				qint32 v;
+				stream >> v;
+				cSetScrollNotActive(v == 1);
 			} break;
 
 			case dbiReplaceEmojis: {

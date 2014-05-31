@@ -211,6 +211,7 @@ enum DataBlockId {
 	dbiLoggedPhoneNumber = 25,
 	dbiMutedPeers = 26,
 // 27 reserved
+	dbiSrollNotActive = 28,
 
 	dbiEncryptedWithSalt = 333,
 	dbiEncrypted = 444,
