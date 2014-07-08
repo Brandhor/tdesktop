@@ -1326,6 +1326,8 @@ namespace App {
 
 	void playSound() {
 		if (cSoundNotify() && newMsgSound) newMsgSound->play();
+		if (cScrollNotActive())
+			App::main()->historyWasRead(true);
 	}
 
 	void writeConfig() {

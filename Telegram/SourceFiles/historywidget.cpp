@@ -1775,7 +1775,6 @@ void HistoryWidget::newUnreadMsg(History *history, MsgId msgId) {
 		if (hist == history && hist->unreadLoaded) {
 			if(cScrollNotActive() && !App::wnd()->historyIsActive()) {
 				App::wnd()->psNotify(history, msgId);
-				history->setUnreadCount(history->unreadCount + 1);
 			}
 			else {
 				historyWasRead();

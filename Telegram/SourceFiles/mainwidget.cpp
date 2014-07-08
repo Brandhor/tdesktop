@@ -998,8 +998,8 @@ void MainWidget::newUnreadMsg(History *hist, MsgId msgId) {
 	history.newUnreadMsg(hist, msgId);
 }
 
-void MainWidget::historyWasRead() {
-	history.historyWasRead(false);
+void MainWidget::historyWasRead(bool force) {
+	history.historyWasRead(force);
 }
 
 void MainWidget::animShow(const QPixmap &bgAnimCache, bool back) {

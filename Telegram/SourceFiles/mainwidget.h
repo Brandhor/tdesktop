@@ -126,7 +126,7 @@ public:
 	void dialogsClear(); // after showing peer history
 	void newUnreadMsg(History *history, MsgId msgId);
 	void updUpdated(int32 pts, int32 date, int32 qts, int32 seq);
-	void historyWasRead();
+	void historyWasRead(bool force = false);
 
 	bool getPhotoCoords(PhotoData *photo, int32 &x, int32 &y, int32 &w) const;
 	bool getVideoCoords(VideoData *video, int32 &x, int32 &y, int32 &w) const;
