@@ -102,7 +102,7 @@ public:
 	void psFlash();
 	void psNotifySettingGot();
 
-	bool psIsActive() const;
+	bool psIsActive(int state = -1) const;
 	bool psIsOnline(int windowState) const;
 
 	void psUpdateWorkmode();
@@ -135,6 +135,8 @@ public slots:
 	void psNotifyFire();
 
 protected:
+
+	void psNotIdle() const;
 
 	bool posInited;
 	QSystemTrayIcon *trayIcon;
@@ -187,7 +189,7 @@ class PsApplication : public QApplication {
 
 public:
 
-	PsApplication(int argc, char *argv[]);
+	PsApplication(int &argc, char **argv);
 	void psInstallEventFilter();
 	~PsApplication();
 
@@ -246,7 +248,7 @@ QString psLocalServerPrefix();
 QString psCurrentCountry();
 QString psCurrentLanguage();
 QString psAppDataPath();
-QString psCurrentExeDirectory();
+QString psCurrentExeDirectory(int argc, char *argv[]);
 void psAutoStart(bool start, bool silent = false);
 
 int psCleanup();
@@ -259,3 +261,4 @@ void psExecTelegram();
 void psPostprocessFile(const QString &name);
 void psOpenFile(const QString &name, bool openWith = false);
 void psShowInFolder(const QString &name);
+void psFinish();

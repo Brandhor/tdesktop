@@ -31,7 +31,6 @@ namespace {
 	AuthExportRequests authExportRequests;
 
 	bool started = false;
-	bool loadingConfig = false;
 
 	uint32 layer;
 	
@@ -440,8 +439,8 @@ namespace MTP {
 		_localKey.setKey(key);
 	}
 
-	void start() {	
-		unixtimeInit();
+    void start() {
+        unixtimeInit();
 
 		if (!localKey().created()) {
 			LOG(("App Error: trying to start MTP without local key!"));
@@ -484,7 +483,7 @@ namespace MTP {
 		if (!started) return;
 
 		int32 m = mainSession->getDC();
-		if (!dc || m == dc || m && fromZeroOnly) return;
+		if (!dc || m == dc || (m && fromZeroOnly)) return;
 		mtpSetDC(dc);
 		mainSession = _mtp_internal::getSession(dc);
 	}

@@ -22,13 +22,13 @@ Copyright (c) 2014 John Preston, https://tdesktop.com
 #include "flatcheckbox.h"
 
 FlatCheckbox::FlatCheckbox(QWidget *parent, const QString &text, bool checked, const style::flatCheckbox &st) : Button(parent),
-	_text(text), _checked(checked), _st(st), _opacity(1), a_over(0, 0) {
+	_st(st), a_over(0, 0), _text(text), _opacity(1), _checked(checked) {
 	connect(this, SIGNAL(clicked()), this, SLOT(onClicked()));
 	connect(this, SIGNAL(stateChanged(int, ButtonStateChangeSource)), this, SLOT(onStateChange(int, ButtonStateChangeSource)));
 	setCursor(_st.cursor);
 	int32 w = _st.width, h = _st.height;
-	if (w <= 0) w = _st.textLeft + _st.font->m.width(_text);
-	if (h <= 0) h = qMax(_st.font->height, _st.imageRect.height());
+	if (w <= 0) w = _st.textLeft + _st.font->m.width(_text) + 1;
+	if (h <= 0) h = qMax(_st.font->height, _st.imageRect.pxHeight());
 	resize(QSize(w, h));
 }
 
@@ -86,12 +86,13 @@ void FlatCheckbox::paintEvent(QPaintEvent *e) {
 	QRect tRect(rect());
 	tRect.setTop(_st.textTop);
 	tRect.setLeft(_st.textLeft);
+//    p.drawText(_st.textLeft, _st.textTop + _st.font->ascent, _text);
 	p.drawText(tRect, _text, QTextOption(style::al_topleft));
 
 	if (_state & StateDisabled) {
 		QRect sRect(_checked ? _st.chkDisImageRect : _st.disImageRect);
 		p.drawPixmap(_st.imagePos, App::sprite(), sRect);
-	} else if (_checked && _st.chkImageRect == _st.chkOverImageRect || !_checked && _st.imageRect == _st.overImageRect) {
+	} else if ((_checked && _st.chkImageRect == _st.chkOverImageRect) || (!_checked && _st.imageRect == _st.overImageRect)) {
 		p.setOpacity(_opacity);
 		QRect sRect(_checked ? _st.chkImageRect : _st.imageRect);
 		p.drawPixmap(_st.imagePos, App::sprite(), sRect);
@@ -184,7 +185,7 @@ void RadiobuttonsGroup::remove(FlatRadiobutton * const &radio) {
 }
 
 FlatRadiobutton::FlatRadiobutton(QWidget *parent, const QString &group, int32 value, const QString &text, bool checked, const style::flatCheckbox &st) :
-	FlatCheckbox(parent, text, checked, st), _value(value), _group(radioButtons.reg(group)) {
+	FlatCheckbox(parent, text, checked, st), _group(radioButtons.reg(group)), _value(value) {
 	_group->insert(this);
 	connect(this, SIGNAL(changed()), this, SLOT(onChanged()));
 	if (this->checked()) onChanged();

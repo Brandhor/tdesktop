@@ -34,9 +34,8 @@ namespace {
 	class _TypeSizeCheckerHelper {
 	public:
 		_TypeSizeCheckerHelper() {
-#ifndef Q_OS_MAC
-			_BadTypeSize<T> field;
-#endif
+            int _BadTypeSize[N ? -1 : 1];
+            (void)sizeof(_BadTypeSize);
 		}
 	};
 
@@ -94,7 +93,7 @@ namespace {
 		clock_gettime(CLOCK_REALTIME, &ts);
 		_msgIdMsStart = 1000000000 * uint64(ts.tv_sec) + uint64(ts.tv_nsec);
 #endif
-
+        
 		uint32 msgIdRand;
 		memset_rand(&msgIdRand, sizeof(uint32));
 		_msgIdStart = (((uint64)((uint32)unixtime()) << 32) | (uint64)msgIdRand);
@@ -151,7 +150,7 @@ MTPint toServerTime(const int32 &clientTime) {
 namespace {
 	float64 _msFreq;
 	float64 _msgIdCoef;
-    uint64 _msStart = 0;
+    int64 _msStart = 0;
 
 	class _MsInitializer {
 	public:
@@ -167,7 +166,7 @@ namespace {
 			QueryPerformanceCounter(&li);
 			_msStart = li.QuadPart;
 #elif defined Q_OS_MAC
-            mach_timebase_info_data_t tb = { 0 };
+            mach_timebase_info_data_t tb = { 0, 0 };
             mach_timebase_info(&tb);
             _msFreq = (float64(tb.numer) / tb.denom) / 1000000.;
 
@@ -398,11 +397,11 @@ namespace {
 	}
 
 	inline uint32 _md5_F(uint32 x, uint32 y, uint32 z) {
-		return x & y | ~x & z;
+		return (x & y) | (~x & z);
 	}
 
 	inline uint32 _md5_G(uint32 x, uint32 y, uint32 z) {
-		return x & z | y & ~z;
+		return (x & z) | (y & ~z);
 	}
 
 	inline uint32 _md5_H(uint32 x, uint32 y, uint32 z) {

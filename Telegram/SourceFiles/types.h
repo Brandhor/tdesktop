@@ -49,7 +49,7 @@ using std::swap;
 class Exception : public exception {
 public:
 
-    Exception(const QString &msg, bool isFatal = true) : _fatal(isFatal), _msg(msg) {
+    Exception(const QString &msg, bool isFatal = true) : _fatal(isFatal), _msg(msg.toUtf8()) {
 		LOG(("Exception: %1").arg(msg));
 	}
 	bool fatal() const {
@@ -57,14 +57,14 @@ public:
 	}
 
     virtual const char *what() const throw() {
-        return _msg.toUtf8().constData();
+        return _msg.constData();
     }
     virtual ~Exception() throw() {
     }
 
 private:
 	bool _fatal;
-    QString _msg;
+    QByteArray _msg;
 };
 
 class MTPint;
@@ -268,6 +268,12 @@ enum DBIEmojiTab {
 	dbietObjects =  2,
 	dbietPlaces  =  3,
 	dbietSymbols =  4,
+};
+
+enum DBIPlatform {
+    dbipWindows  = 0,
+    dbipMac      = 1,
+    dbipLinux    = 2,
 };
 
 typedef enum {

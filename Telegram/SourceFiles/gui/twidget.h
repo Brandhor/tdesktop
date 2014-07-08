@@ -44,3 +44,5 @@ protected:
 private:
 
 };
+
+QPixmap myGrab(QWidget *target, const QRect &rect);

@@ -65,9 +65,8 @@ namespace {
 	const uint32 replacesCount = sizeof(replaces) / sizeof(EmojiReplace), replacesInRow = 8;
 }
 
-EmojiBox::EmojiBox() : _hiding(false),
-	_done(this, lang(lng_about_done), st::aboutCloseButton),
-	a_opacity(0, 1) {
+EmojiBox::EmojiBox() : _done(this, lang(lng_about_done), st::aboutCloseButton),
+    _hiding(false), a_opacity(0, 1) {
 
 	fillBlocks();
 
@@ -89,14 +88,14 @@ EmojiBox::EmojiBox() : _hiding(false),
 	resize(_width, _height);
 
 	showAll();
-	_cache = grab(rect());
+	_cache = myGrab(this, rect());
 	hideAll();
 }
 
 void EmojiBox::fillBlocks() {
 	BlockRow currentRow;
 	currentRow.reserve(replacesInRow);
-	for (int32 i = 0; i < replacesCount; ++i) {
+	for (uint32 i = 0; i < replacesCount; ++i) {
 		Block block(getEmoji(replaces[i].code), QString::fromUtf8(replaces[i].replace));
 		currentRow.push_back(block);
 		if (currentRow.size() == replacesInRow) {
@@ -150,7 +149,7 @@ void EmojiBox::paintEvent(QPaintEvent *e) {
 				for (BlockRow::const_iterator j = i->cbegin(), en = i->cend(); j != en; ++j) {
 					if (j->emoji) {
 						QPoint pos(left + (st::emojiReplaceWidth - st::emojiSize) / 2, top + (st::emojiReplaceHeight - _blockHeight) / 2);
-						p.drawPixmap(pos, App::emojis(), QRect(j->emoji->x, j->emoji->y, st::emojiSize, st::emojiSize));
+						p.drawPixmap(pos, App::emojis(), QRect(j->emoji->x, j->emoji->y, st::emojiImgSize, st::emojiImgSize));
 					}
 					QRect trect(left, top + (st::emojiReplaceHeight + _blockHeight) / 2 - st::emojiTextFont->height, st::emojiReplaceWidth, st::emojiTextFont->height);
 					p.drawText(trect, j->text, QTextOption(Qt::AlignHCenter | Qt::AlignTop));
@@ -186,7 +185,7 @@ void EmojiBox::onClose() {
 void EmojiBox::startHide() {
 	_hiding = true;
 	if (_cache.isNull()) {
-		_cache = grab(rect());
+		_cache = myGrab(this, rect());
 		hideAll();
 	}
 	a_opacity.start(0);

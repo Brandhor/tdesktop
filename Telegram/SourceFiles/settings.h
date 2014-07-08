@@ -131,4 +131,14 @@ const RecentEmojiPack &cGetRecentEmojis();
 
 DeclareReadSetting(QString, LangFile);
 
+DeclareSetting(bool, Retina);
+DeclareSetting(float64, RetinaFactor);
+DeclareSetting(int32, IntRetinaFactor);
+DeclareSetting(bool, CustomNotifies);
+
+DeclareReadSetting(uint64, Instance);
+
+DeclareReadSetting(DBIPlatform, Platform);
+DeclareReadSetting(QUrl, UpdateURL);
+
 void settingsParseArgs(int argc, char *argv[]);

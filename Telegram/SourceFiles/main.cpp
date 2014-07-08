@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 	settingsParseArgs(argc, argv);
-	for (uint32 i = 0; i < argc; ++i) {
+	for (int32 i = 0; i < argc; ++i) {
 		if (string("-fixprevious") == argv[i]) {
 			return psFixPrevious();
 		} else if (string("-cleanup") == argv[i]) {
@@ -45,8 +45,15 @@ int main(int argc, char *argv[]) {
 
 	DEBUG_LOG(("Application Info: ideal thread count: %1, using %2 connections per session").arg(QThread::idealThreadCount()).arg(cConnectionsInSession()));
 
-	Application app(argc, argv);
-	int result = App::quiting() ? 0 : app.exec();
+	int result = 0;
+	{
+		Application app(argc, argv);
+		if (!App::quiting()) {
+			result = app.exec();
+		}
+	}
+    
+    psFinish();
 
 	DEBUG_LOG(("Application Info: Telegram done, result: %1").arg(result));
 

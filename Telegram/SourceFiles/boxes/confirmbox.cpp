@@ -22,10 +22,10 @@ Copyright (c) 2014 John Preston, https://tdesktop.com
 #include "mainwidget.h"
 #include "window.h"
 
-ConfirmBox::ConfirmBox(QString text, QString doneText, QString cancelText) : _hiding(false), _text(100),
+ConfirmBox::ConfirmBox(QString text, QString doneText, QString cancelText) :
 	_confirm(this, doneText.isEmpty() ? lang(lng_continue) : doneText, st::btnSelectDone),
 	_cancel(this, cancelText.isEmpty() ? lang(lng_cancel) : cancelText, st::btnSelectCancel),
-	a_opacity(0, 1), af_opacity(anim::linear) {
+	_text(100), _hiding(false), a_opacity(0, 1), af_opacity(anim::linear) {
 
 	_text.setText(st::boxFont, text, _textPlainOptions);
 
@@ -43,7 +43,7 @@ ConfirmBox::ConfirmBox(QString text, QString doneText, QString cancelText) : _hi
 	resize(_width, _height);
 
 	showAll();
-	_cache = grab(rect());
+	_cache = myGrab(this, rect());
 	hideAll();
 }
 
@@ -118,7 +118,7 @@ void ConfirmBox::onCancel() {
 void ConfirmBox::startHide() {
 	_hiding = true;
 	if (_cache.isNull()) {
-		_cache = grab(rect());
+		_cache = myGrab(this, rect());
 		hideAll();
 	}
 	a_opacity.start(0);
