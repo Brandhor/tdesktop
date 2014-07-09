@@ -40,7 +40,30 @@ inline QString replaceEmojis(const QString &text) {
 	QString result;
 	const QChar *emojiEnd = text.unicode(), *e = text.cend();
 	bool canFindEmoji = true, consumePrevious = false;
+	QStringList protocols;
+	protocols << "http://" << "https://" << "ftp://" << "itmss://";
+	QString word;
 	for (const QChar *ch = emojiEnd; ch != e;) {
+		if (ch->isSpace())
+			word = "";
+		else {
+			word.append(*ch);
+		}
+
+		QRegExp mailr("\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\\b");
+		mailr.setCaseSensitivity(Qt::CaseInsensitive);
+		mailr.setPatternSyntax(QRegExp::RegExp);
+		if (mailr.exactMatch(word))  {
+			canFindEmoji = false;
+		} else {
+			foreach(const QString &protocol, protocols) {
+				if (word.startsWith(protocol, Qt::CaseInsensitive)) {
+					canFindEmoji = false;
+					break;
+				}
+			}
+		}
+
 		uint32 emojiCode = 0;
 		const QChar *newEmojiEnd = 0;
 		if (canFindEmoji) {
