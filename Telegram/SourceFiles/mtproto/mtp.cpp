@@ -130,7 +130,7 @@ namespace {
 
 	bool onErrorDefault(mtpRequestId requestId, const RPCError &error) {
 		const QString &err(error.type());
-		QRegularExpressionMatch m;;
+        QRegularExpressionMatch m;
 		if ((m = QRegularExpression("^(FILE|PHONE|NETWORK|USER)_MIGRATE_(\\d+)$").match(err)).hasMatch()) {
 			if (!requestId) return false;
 
@@ -564,6 +564,11 @@ namespace MTP {
 
 	int32 authedId() {
 		return mtpAuthed();
+	}
+
+	void logoutKeys(RPCDoneHandlerPtr onDone, RPCFailHandlerPtr onFail) {
+		mtpRequestId req = MTP::send(MTPauth_LogOut(), onDone, onFail);
+		mtpLogoutOtherDCs();
 	}
 
 	void setGlobalDoneHandler(RPCDoneHandlerPtr handler) {

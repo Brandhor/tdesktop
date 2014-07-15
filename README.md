@@ -15,20 +15,26 @@ Only Windows and OS X systems are supported at this moment, Linux builds are on 
 * Windows 8.1 (**not** RT)
 * OS X 10.9
 * OS X 10.7-10.8 (not tested)
+* Ubuntu 13.04
+* Ubuntu 14.04
+* Fedora (not tested)
 
 ###Third-party
 
-* Qt 5.3.0, slightly patched ([GPL](http://qt-project.org/doc/qt-5/gpl.html))
+* Qt 5.3.1, slightly patched ([GPL](http://qt-project.org/doc/qt-5/gpl.html))
 * OpenSSL 1.0.1g ([OpenSSL License](https://www.openssl.org/source/license.html))
 * zlib 1.2.8 ([zlib License](http://www.zlib.net/zlib_license.html))
 * libexif 0.6.20 ([LGPL](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html))
 * LZMA SDK 9.20 ([public domain](http://www.7-zip.org/sdk.html))
 * liblzma ([public domain](http://tukaani.org/xz/))
 * Open Sans font ([Apache License](http://www.apache.org/licenses/LICENSE-2.0.html))
+* DejaVu Sans font ([Free license](http://dejavu-fonts.org/wiki/License))
 
 ###[Build instructions for Visual Studio 2013](https://github.com/telegramdesktop/tdesktop/blob/master/MSVC.md)
 
 ###[Build instructions for XCode 5.1.1](https://github.com/telegramdesktop/tdesktop/blob/master/XCODE.md)
+
+###[Build instructions for Qt Creator 2.7 Ubuntu](https://github.com/telegramdesktop/tdesktop/blob/master/QTCREATOR.md)
 
 ##Projects in Telegram solution
 

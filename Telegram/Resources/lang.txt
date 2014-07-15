@@ -122,6 +122,8 @@ lng_signup_firstname: "First Name";
 lng_signup_lastname: "Last Name";
 
 lng_dlg_filter: "Search";
+lng_dlg_conversations: "Conversations";
+lng_dlg_messages: "Messages";
 lng_dlg_new_group_name: "Group name";
 lng_dlg_create_group: "Create";
 
@@ -380,6 +382,10 @@ lng_about_text: "Unofficial free messaging app based on [a href=\"https://core.t
 This software is licensed under [a href=\"https://github.com/telegramdesktop/tdesktop/blob/master/LICENSE\"]GNU GPL[/a] version 3,
 source code is available on [a href=\"https://github.com/telegramdesktop/tdesktop\"]GitHub[/a].";
 lng_about_done: "Done";
+
+lng_search_no_results: "No messages found";
+lng_search_one_result: "Found {count} message";
+lng_search_n_results: "Found {count} messages";
 
 // Mac specific
 

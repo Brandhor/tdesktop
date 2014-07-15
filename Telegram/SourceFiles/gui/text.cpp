@@ -112,7 +112,7 @@ namespace {
 
 	const QRegularExpression reDomain(QString::fromUtf8("(?<![A-Za-z\\$0-9А-Яа-яёЁ\\-\\_%=])(?:([a-zA-Z]+)://)?((?:[A-Za-zА-яА-ЯёЁ0-9\\-\\_]+\\.){1,5}([A-Za-zрф\\-\\d]{2,22}))"));
 	const QRegularExpression reMailName(QString::fromUtf8("[a-zA-Z\\-_\\.0-9]{1,256}$"));
-	const QRegularExpression reMailStart(QString::fromUtf8("[a-zA-Z\\-_\\.0-9]{1,256}\\@"));
+	const QRegularExpression reMailStart(QString::fromUtf8("^[a-zA-Z\\-_\\.0-9]{1,256}\\@"));
 	QSet<int32> validProtocols, validTopDomains;
 	void initLinkSets();
 
@@ -1245,9 +1245,9 @@ public:
 				break;
 			}
 		}/**/
-		for (; _lineEnd > _lineStart + 1; --_lineEnd) {
+        for (; _lineEnd > _lineStart; --_lineEnd) {
 			QChar ch = _t->_text.at(_lineEnd - 1);
-			if (ch != QChar::Space && ch != QChar::LineFeed) {
+            if ((ch != QChar::Space || _lineEnd == _lineStart + 1) && ch != QChar::LineFeed) {
 				break;
 			}
 		}/**/
@@ -2716,6 +2716,9 @@ void Text::clean() {
 namespace {
 
 	struct ScriptLine {
+        ScriptLine() : length(0), textWidth(0) {
+        }
+
 		int32 length;
 		QFixed textWidth;
 	};

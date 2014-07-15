@@ -31,11 +31,11 @@ LocalImageLoaderPrivate::LocalImageLoaderPrivate(int32 currentUser, LocalImageLo
 
 void LocalImageLoaderPrivate::prepareImages() {
 	QString file, filename, mime;
-	int32 filesize;
+    int32 filesize = 0;
 	QImage img;
 	QByteArray data;
 	PeerId peer;
-	uint64 id, jpeg_id;
+    uint64 id, jpeg_id = 0;
 	ToPrepareMediaType type;
 	{
 		QMutexLocker lock(loader->toPrepareMutex());
@@ -100,7 +100,7 @@ void LocalImageLoaderPrivate::prepareImages() {
 		}
 	} else {
 		type = ToPreparePhoto; // only photo from QImage
-		filename = qsl("Photo.jpg");
+		filename = qsl("Untitled.jpg");
 		filesize = 0;
 	}
 

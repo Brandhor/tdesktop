@@ -61,7 +61,7 @@ namespace {
 
 	HistoryItem *hoveredItem = 0, *pressedItem = 0, *hoveredLinkItem = 0, *pressedLinkItem = 0, *contextItem = 0, *mousedItem = 0;
 
-	QSoundEffect *newMsgSound = 0;
+    QSoundEffect *newMsgSound = 0;
 	QPixmap *sprite = 0, *emojis = 0;
 
 	typedef QMap<uint32, QPixmap> EmojisMap;
@@ -113,7 +113,7 @@ namespace App {
 		Window *w(wnd());
 		if (w) {
 			w->tempDirDelete();
-			w->psClearNotifyFast();
+			w->notifyClearFast();
 			w->setupIntro(true);
 		}
 		MainWidget *m(main());
@@ -133,7 +133,7 @@ namespace App {
 	}
 
 	void logOut() {
-		MTP::send(MTPauth_LogOut(), rpcDone(&loggedOut), rpcFail(&loggedOut));
+		MTP::logoutKeys(rpcDone(&loggedOut), rpcFail(&loggedOut));
 	}
 
 	PeerId peerFromMTP(const MTPPeer &peer_id) {
@@ -221,7 +221,7 @@ namespace App {
 		const QVector<MTPUser> &v(users.c_vector().v);
 		for (QVector<MTPUser>::const_iterator i = v.cbegin(), e = v.cend(); i != e; ++i) {
 			const MTPuser &user(*i);
-			UserData *data;
+            UserData *data = 0;
 			bool wasContact = false;
 			const MTPUserStatus *status = 0;
 
@@ -315,13 +315,15 @@ namespace App {
 			} break;
 			}
 
+            if (!data) continue;
+
 			data->loaded = true;
 			if (status) switch (status->type()) {
 			case mtpc_userStatusOffline: data->onlineTill = status->c_userStatusOffline().vwas_online.v; break;
 			case mtpc_userStatusOnline: data->onlineTill = status->c_userStatusOnline().vexpires.v; break;
 			}
 
-			if (data->contact < 0 && !data->phone.isEmpty() && (data->id & 0xFFFFFFFF) != MTP::authedId()) {
+            if (data->contact < 0 && !data->phone.isEmpty() && int32(data->id & 0xFFFFFFFF) != MTP::authedId()) {
 				data->contact = 0;
 			}
 			if (data->contact > 0 && !wasContact) {
@@ -338,7 +340,7 @@ namespace App {
 		const QVector<MTPChat> &v(chats.c_vector().v);
 		for (QVector<MTPChat>::const_iterator i = v.cbegin(), e = v.cend(); i != e; ++i) {
 			const MTPchat &chat(*i);
-			ChatData *data;
+            ChatData *data = 0;
 			QString title;
 			switch (chat.type()) {
 			case mtpc_chat: {
@@ -508,7 +510,7 @@ namespace App {
 			}
 		}
 		for (QMap<int32, int32>::const_iterator i = msgsIds.cbegin(), e = msgsIds.cend(); i != e; ++i) {
-			histories().addToBack(v[*i], newMsgs);
+			histories().addToBack(v[*i], newMsgs ? 1 : 0);
 		}
 	}
 
@@ -557,9 +559,6 @@ namespace App {
 			if (j != msgsData.cend()) {
 				History *h = (*j)->history();
 				(*j)->destroy();
-				if (h->isEmpty()) {
-					if (App::main()) App::main()->checkPeerHistory(h->peer);
-				}
 			}
 		}
 	}
@@ -1100,23 +1099,26 @@ namespace App {
 		return 0;
 	}
 
-	bool historyRegItem(HistoryItem *item) {
+	HistoryItem *historyRegItem(HistoryItem *item) {
 		MsgsData::const_iterator i = msgsData.constFind(item->id);
 		if (i == msgsData.cend()) {
 			msgsData.insert(item->id, item);
 			if (item->id > ::maxMsgId) ::maxMsgId = item->id;
-			return true;
+			return 0;
 		}
-		return (i.value() == item);
+		if (i.value() != item && !i.value()->block() && item->block()) { // replace search item
+			item->history()->itemReplaced(i.value(), item);
+			if (App::main()) {
+				emit App::main()->historyItemReplaced(i.value(), item);
+			}
+			delete i.value();
+			msgsData.insert(item->id, item);
+			return 0;
+		}
+		return (i.value() == item) ? 0 : i.value();
 	}
 
-	void historyUnregItem(HistoryItem *item) {
-		MsgsData::iterator i = msgsData.find(item->id);
-		if (i != msgsData.cend()) {
-			if (i.value() == item) {
-				msgsData.erase(i);
-			}
-		}
+	void historyItemDetached(HistoryItem *item) {
 		if (::hoveredItem == item) {
 			hoveredItem(0);
 		}
@@ -1135,13 +1137,32 @@ namespace App {
 		if (::mousedItem == item) {
 			mousedItem(0);
 		}
+	}
+
+	void historyUnregItem(HistoryItem *item) {
+		MsgsData::iterator i = msgsData.find(item->id);
+		if (i != msgsData.cend()) {
+			if (i.value() == item) {
+				msgsData.erase(i);
+			}
+		}
+		historyItemDetached(item);
 		if (App::main()) {
 			emit App::main()->historyItemDeleted(item);
 		}
 	}
 
 	void historyClearMsgs() {
+		QVector<HistoryItem*> toDelete;
+		for (MsgsData::const_iterator i = msgsData.cbegin(), e = msgsData.cend(); i != e; ++i) {
+			if ((*i)->detached()) {
+				toDelete.push_back(*i);
+			}
+		}
 		msgsData.clear();
+		for (int i = 0, l = toDelete.size(); i < l; ++i) {
+			delete toDelete[i];
+		}
 		::maxMsgId = 0;
 		::hoveredItem = ::pressedItem = ::hoveredLinkItem = ::pressedLinkItem = ::contextItem = 0;
 	}
@@ -1203,11 +1224,11 @@ namespace App {
 
 	void initMedia() {
 		deinitMedia(false);
-		if (!newMsgSound) {
-			newMsgSound = new QSoundEffect();
-			newMsgSound->setSource(QUrl::fromLocalFile(st::newMsgSound));
-			newMsgSound->setVolume(1);
-		}
+        if (!newMsgSound) {
+            newMsgSound = new QSoundEffect();
+            newMsgSound->setSource(QUrl::fromLocalFile(st::newMsgSound));
+            newMsgSound->setVolume(1);
+        }
 
 		if (!::sprite) {
 			::sprite = new QPixmap(st::spriteFile);
@@ -1224,11 +1245,17 @@ namespace App {
 		textlnkOver(TextLinkPtr());
 		textlnkDown(TextLinkPtr());
 
+		if (completely && App::main()) {
+			App::main()->disconnect(SIGNAL(historyItemDeleted(HistoryItem *)));
+		}
+
+		histories().clear();
+
 		if (completely) {
 			LOG(("Deleting sound.."));
-			delete newMsgSound;
+            delete newMsgSound;
 			LOG(("Sound deleted!"));
-			newMsgSound = 0;
+            newMsgSound = 0;
 
 			delete ::sprite;
 			::sprite = 0;
@@ -1241,12 +1268,6 @@ namespace App {
 		} else {
 			clearStorageImages();
 		}
-
-        if (App::main()) {
-            App::main()->disconnect(SIGNAL(historyItemDeleted(HistoryItem*)));
-        }
-
-		histories().clear();
 
 		serviceImageCacheSize = imageCacheSize();
 	}
@@ -1818,7 +1839,7 @@ namespace App {
 
 		setQuiting();
 		if (wnd()) {
-			wnd()->psClearNotifyFast();
+			wnd()->notifyClearFast();
 		}
 		if (app()) {
 			app()->quit();

@@ -81,9 +81,10 @@ Application::Application(int &argc, char **argv) : PsApplication(argc, argv),
 
 	installEventFilter(new _DebugWaiter(this));
 
-	QFontDatabase::addApplicationFont(qsl(":/gui/art/OpenSans-Regular.ttf"));
-	QFontDatabase::addApplicationFont(qsl(":/gui/art/OpenSans-Bold.ttf"));
-	QFontDatabase::addApplicationFont(qsl(":/gui/art/OpenSans-Semibold.ttf"));
+    QFontDatabase::addApplicationFont(qsl(":/gui/art/fonts/DejaVuSans.ttf"));
+    QFontDatabase::addApplicationFont(qsl(":/gui/art/fonts/OpenSans-Regular.ttf"));
+    QFontDatabase::addApplicationFont(qsl(":/gui/art/fonts/OpenSans-Bold.ttf"));
+    QFontDatabase::addApplicationFont(qsl(":/gui/art/fonts/OpenSans-Semibold.ttf"));
 
 	float64 dpi = primaryScreen()->logicalDotsPerInch();
 	if (dpi <= 108) { // 0-96-108
@@ -115,9 +116,9 @@ Application::Application(int &argc, char **argv) : PsApplication(argc, argv),
 	anim::startManager();
 	historyInit();
 
-	window = new Window();
+    window = new Window();
 
-	psInstallEventFilter();
+    psInstallEventFilter();
 
 	updateCheckTimer.setSingleShot(true);
 
@@ -143,7 +144,8 @@ Application::Application(int &argc, char **argv) : PsApplication(argc, argv),
 }
 
 void Application::onAppUpdate(const MTPhelp_AppUpdate &response) {
-	updateRequestId = 0;
+    updateRequestId = 0;
+
 	cSetLastUpdateCheck(unixtime());
 	App::writeConfig();
 	if (response.type() == mtpc_help_noAppUpdate) {
@@ -416,7 +418,7 @@ void Application::startUpdateCheck(bool forceWait) {
 			}
 		}
 	}
-	if ((cManyInstance() && !cDebug()) || cPlatform() == dbipLinux) return; // only main instance is updating
+    if (cManyInstance() && !cDebug()) return; // only main instance is updating
 
 	if (sendRequest) {
 		QNetworkRequest checkVersion(cUpdateURL());

@@ -69,8 +69,11 @@ QString gLangFile;
 bool gRetina = false;
 float64 gRetinaFactor = 1.;
 int32 gIntRetinaFactor = 1;
+#ifdef Q_OS_MAC
 bool gCustomNotifies = false;
-
+#else
+bool gCustomNotifies = true;
+#endif
 uint64 gInstance = 0.;
 
 #ifdef Q_OS_WIN
@@ -87,6 +90,11 @@ QUrl gUpdateURL = QUrl(qsl("http://tdesktop.com/linux/tupdates/current"));
 #endif
 
 void settingsParseArgs(int argc, char *argv[]) {
+	if (cPlatform() == dbipMac) {
+		gCustomNotifies = false;
+	} else {
+		gCustomNotifies = true;
+	}
     memset_rand(&gInstance, sizeof(gInstance));
 	gExeDir = psCurrentExeDirectory(argc, argv);
 	for (int32 i = 0; i < argc; ++i) {
